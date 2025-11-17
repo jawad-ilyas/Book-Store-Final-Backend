@@ -11,16 +11,15 @@ const ReviewSchema = new Schema({
     },
     rating: {
         type: Number,
-        default: 5
+        default: 5,
+        min: 1,
+        max: 5
     },
     comment: {
         type: String,
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+
+}, { timestamps: true });
 
 export const Review = mongoose.model("Review", ReviewSchema);

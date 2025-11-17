@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { Book } from "../models/Book.js";
-import { Author } from "../models/Author";
+import { Author } from "../models/Author.js";
 import { Category } from "../models/Category.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 
@@ -136,9 +136,8 @@ const deleteBook = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Book Id is not found ", success: false })
     }
 
-    const book = await Book.findOneAndUpdate({
-        id
-    })
+    const book = await Book.findByIdAndDelete({_id: id})
+
     if (!book) {
         return res.status(404).json({ message: "Book not found", success: false });
     }

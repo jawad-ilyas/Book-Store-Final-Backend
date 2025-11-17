@@ -11,7 +11,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
     const { books } = req.body;
 
     if (!books || !Array.isArray(books) || books.length === 0) {
-        return res.status(400).json({ message: "Books are required", success: false });
+            return res.status(400).json({ message: "Books are required", success: false });
     }
 
     // Validate all books exist

@@ -2,12 +2,12 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import { User } from "../models/User.js";
 
- const authMiddleware = asyncHandler(async (req, res, next) => {
+const authMiddleware = asyncHandler(async (req, res, next) => {
     // ---- 1. Get token from header or cookies ----
     const token =
         req.headers?.authorization?.split(" ")[1] ||
-        req.cookies?.token;
-
+        req.cookies?.token
+    console.log("token", token)
     if (!token) {
         return res.status(401).json({
             message: "No token provided. Authorization denied."
@@ -39,4 +39,4 @@ import { User } from "../models/User.js";
     next();
 });
 
-export {authMiddleware}
+export { authMiddleware }
