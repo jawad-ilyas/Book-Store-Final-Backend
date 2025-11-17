@@ -4,6 +4,11 @@ const CouponSchema = new Schema({
 
     code: {
         type: String,
+        required: true
+    },
+    couponName: {
+        type: String,
+        required: true
     },
     discountType: {
         type: String,
