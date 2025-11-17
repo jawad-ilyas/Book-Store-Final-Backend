@@ -21,6 +21,7 @@ import BookRouter from "./routes/bookRoutes.js"
 import ReviewRouter from "./routes/reviewRoutes.js"
 import OrderRouter from "./routes/orderRoutes.js"
 import NewsLetterRouter from "./routes/newsletterRoutes.js"
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 app.use("/api/auth", AuthRouter)
@@ -29,6 +30,7 @@ app.use("/api/books", BookRouter)
 app.use("/api/reviews", ReviewRouter)
 app.use("/api/orders", OrderRouter)
 app.use("/api/newsletter", NewsLetterRouter)
+app.use("/api/payments", paymentRoutes);
 
 
 
