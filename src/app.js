@@ -23,6 +23,7 @@ import OrderRouter from "./routes/orderRoutes.js"
 import NewsLetterRouter from "./routes/newsletterRoutes.js"
 import paymentRoutes from "./routes/paymentRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
+import adminAnalyticsRouter from "./routes/adminAnalyticsRouter.js";
 
 
 app.use("/api/auth", AuthRouter)
@@ -33,6 +34,7 @@ app.use("/api/orders", OrderRouter)
 app.use("/api/newsletters", NewsLetterRouter)
 app.use("/api/payments", paymentRoutes);
 app.use("/api/address", addressRoutes);
+app.use("/api/adminAnalytics", adminAnalyticsRouter);
 
 
 
