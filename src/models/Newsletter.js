@@ -7,10 +7,7 @@ const NewsletterSchema = new Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-})
+
+}, { timestamps: true })
 
 export const Newsletter = mongoose.model('Newsletter', NewsletterSchema)
