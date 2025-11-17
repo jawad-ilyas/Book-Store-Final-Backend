@@ -19,7 +19,7 @@ const uploadCloudinary = async (localImagePath) => {
         if (!localImagePath) throw new Error("No file path provided");
 
         const result = await cloudinary.uploader.upload(localImagePath, {
-            folder: "uploads", // optional - creates a folder in Cloudinary
+            folder: "book-store", // optional - creates a folder in Cloudinary
             resource_type: "auto", // handles image, video, etc.
         });
 
