@@ -99,10 +99,136 @@ const createBook = asyncHandler(async (req, res) => {
         book
     });
 });
+const updateBook = asyncHandler(async (req, res) => {
 
 
-const updateBook  = asyncHandler(async ()=>{
+
+    const { id } = req.params
+
+    if (!id) {
+        return res.status(400).json({ message: "Please send the book ID", success: false });
+    }
+
+    const bookId = await Book.findById(id)
+
+    if (!bookId) {
+        return res.status(404).json({ message: "Book not found", success: false });
+    }
+
+    const updateBook = await Book.findByIdAndUpdate(
+        id,
+        { ...req.body },
+        {
+            new: true
+        }
+    )
+    res.status(201).json({
+        success: true,
+        message: "Book updated  successfully",
+        book: updateBook
+    });
+})
+const deleteBook = asyncHandler(async (req, res) => {
+
+    const { id } = req.params
+
+    if (!id) {
+        return res.status(400).json({ message: "Book Id is not found ", success: false })
+    }
+
+    const book = await Book.findOneAndUpdate({
+        id
+    })
+    if (!book) {
+        return res.status(404).json({ message: "Book not found", success: false });
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Book delete   successfully",
+
+    });
+})
+const getBookById = asyncHandler(async (req, res) => {
+
+
+    const { id } = req.params
+
+    if (!id) {
+        return res.status(400).json({ message: "Invalid or missing ID", success: false });
+    }
+
+    const book = await Book.findById(id);
+
+
+    if (!book) {
+        return res.status(404).json({ success: false, message: "Book not found" });
+    }
+
+    res.status(200).json({
+        success: true,
+        book,
+        message: "Book are fetched successfully",
+
+    });
+})
+const getBooks = asyncHandler(async (req, res) => {
+
+    const { search, category, minPrice, maxPrice, minRating } = req.query;
+
+
+    const filter = {}
+
+
+    if (search) {
+        filter.title = { $regex: search }
+    }
+
+    if (category) {
+        filter.category = category
+    }
+
+    if (minPrice || maxPrice) {
+        filter.price = {}
+        if (minPrice) filter.price.$gte = Number(minPrice);
+        if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    if (minRating) {
+        filter.rating = { $gte: Number(minRating) }
+    }
+
+
+
+    const books = await Book.find(filter);
+
+    res.status(200).json({
+        success: true,
+        books,
+        message: "Book are fetched successfully",
+
+    });
+})
+const getTopSellers = asyncHandler(async (_, res) => {
+
+    const books = await Book.find({ topSeller: true })
+
+    res.status(200).json({
+        success: true,
+        message: "Top seller books fetched successfully",
+        books
+    });
 
 })
+const getRecommendedBooks = asyncHandler(async (_, res) => {
 
-export { createBook ,updateBook };
+    const books = await Book.find({ recommended: true })
+
+    res.status(200).json({
+        success: true,
+        message: "Recommended books fetched successfully",
+        books
+    });
+})
+
+export { createBook, updateBook, deleteBook, getBookById, getBooks, getTopSellers, getRecommendedBooks };

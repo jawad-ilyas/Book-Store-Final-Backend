@@ -17,10 +17,12 @@ app.use(cors({
 
 import AuthRouter from "./routes/authRoutes.js"
 import UserRouter from "./routes/userRoutes.js"
+import BookRouter from "./routes/bookRoutes.js"
 
 
 app.use("/api/auth", AuthRouter)
 app.use("/api/users", UserRouter)
+app.use("/api/books", BookRouter)
 
 
 
