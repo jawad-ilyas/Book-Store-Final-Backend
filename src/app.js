@@ -26,6 +26,7 @@ import addressRoutes from "./routes/addressRoutes.js";
 import adminAnalyticsRouter from "./routes/adminAnalyticsRouter.js";
 import authorRouter from "./routes/authorRoutes.js";
 import couponRouter from "./routes/couponsRoutes.js";
+import subscriptionRouter from "./routes/subscriptionPlanRouter.js";
 
 
 app.use("/api/auth", AuthRouter)
@@ -39,6 +40,7 @@ app.use("/api/address", addressRoutes);
 app.use("/api/adminAnalytics", adminAnalyticsRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/coupons", couponRouter);
+app.use("/api/subscriptions", subscriptionRouter);
 
 
 

@@ -82,7 +82,6 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
 
 })
 
-
 const addToCart = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { bookId, quantity = 1 } = req.body;

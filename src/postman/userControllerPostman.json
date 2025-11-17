@@ -1,0 +1,115 @@
+{
+  "info": {
+    "name": "User Wishlist & Cart API",
+    "_postman_id": "f1d3c7f2-1234-5678-abcd-9876543210ef",
+    "description": "Postman collection for testing User Wishlist and Cart APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add to Wishlist",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <token>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"books\": [\"<bookId1>\", \"<bookId2>\"]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/wishlist/add",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "wishlist", "add"]
+        }
+      }
+    },
+    {
+      "name": "Remove from Wishlist",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <token>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"books\": [\"<bookId1>\", \"<bookId2>\"]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/wishlist/remove",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "wishlist", "remove"]
+        }
+      }
+    },
+    {
+      "name": "Add to Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <token>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bookId\": \"<bookId>\",\n  \"quantity\": 2\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/cart/add",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "cart", "add"]
+        }
+      }
+    },
+    {
+      "name": "Remove from Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <token>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bookId\": \"<bookId>\",\n  \"quantity\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/cart/remove",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "cart", "remove"]
+        }
+      }
+    },
+    {
+      "name": "Update Cart Item",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <token>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bookId\": \"<bookId>\",\n  \"quantity\": 3\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/cart/update",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "cart", "update"]
+        }
+      }
+    }
+  ]
+}
