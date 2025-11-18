@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 dotenv.config(); // ✅ ensures env variables available here too
 
 
-console.log('====================================');
-console.log("process.env.CLOUDINARY_API_KEY,", process.env.CLOUDINARY_API_KEY);
-console.log("process.env.CLOUDINARY_SECRET_KEY,", process.env.CLOUDINARY_SECRET_KEY);
-console.log('====================================');
+// console.log('====================================');
+// console.log("process.env.CLOUDINARY_API_KEY,", process.env.CLOUDINARY_API_KEY);
+// console.log("process.env.CLOUDINARY_SECRET_KEY,", process.env.CLOUDINARY_SECRET_KEY);
+// console.log('====================================');
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -38,5 +38,16 @@ const uploadCloudinary = async (localImagePath) => {
         return null;
     }
 };
+// Upload multiple images
+const uploadMultipleCloudinary = async (localImagePaths) => {
+    if (!Array.isArray(localImagePaths)) return [];
+    const uploadedImages = [];
 
-export { uploadCloudinary };
+    for (const path of localImagePaths) {
+        const uploaded = await uploadCloudinary(path);
+        if (uploaded?.url) uploadedImages.push(uploaded.url);
+    }
+
+    return uploadedImages;
+};
+export { uploadCloudinary, uploadMultipleCloudinary };

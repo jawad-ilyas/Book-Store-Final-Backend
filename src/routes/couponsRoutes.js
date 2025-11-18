@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createCoupon, deleteCoupon, getAllCoupon, useCoupon } from "../controllers/couponController";
+import { createCoupon, deleteCoupon, getAllCoupon, useCoupon } from "../controllers/couponController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { adminMiddleware } from "../middleware/adminMiddleware.js";
 

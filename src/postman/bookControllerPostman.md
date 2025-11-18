@@ -16,8 +16,8 @@ Content-Type: multipart/form-data
 BODY (form-data):
 
 title: "JavaScript Mastery"
-author: <AUTHOR_ID>
-category: <CATEGORY_ID>
+author: <AUTHOR_ID> //691c583db6726aa141d3a7d7
+category: <CATEGORY_ID> // 691c5b0f7ccc62379f30a9a5
 subCategory: "Programming"
 price: 25
 discountPercent: 10

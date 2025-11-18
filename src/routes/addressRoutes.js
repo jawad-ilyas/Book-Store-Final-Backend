@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createAddress, deleteAddress, getAddresses, updateAddress } from "../controllers/addressController";
+import { createAddress, deleteAddress, getAddresses, updateAddress } from "../controllers/addressController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 

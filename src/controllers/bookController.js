@@ -2,12 +2,14 @@ import asyncHandler from "express-async-handler"
 import { Book } from "../models/Book.js";
 import { Author } from "../models/Author.js";
 import { Category } from "../models/Category.js";
-import { uploadCloudinary } from "../utils/cloudinary.js";
+import { uploadCloudinary, uploadMultipleCloudinary } from "../utils/cloudinary.js";
 
 
 
 
 const createBook = asyncHandler(async (req, res) => {
+    console.log("REQ.FILES ====>", req.files);
+    console.log("REQ.BODY ====>", req.body);
     const {
         title,
         author,
@@ -28,9 +30,15 @@ const createBook = asyncHandler(async (req, res) => {
         recommended,
         slug
     } = req.body;
-
-    const coverImageLocalPath = req.file?.path; // uploaded image path from Cloudinary
-
+    console.log("title into creaet book ", title)
+    console.log("title into creaet category ", category)
+    console.log("title into creaet price ", price)
+    console.log("title into creaet slug ", slug)
+    console.log("title into creaet author ", author)
+    const coverImageLocalPath = req.files?.coverImage[0]?.path; // uploaded image path from Cloudinary
+    console.log("coverImageLocalPath", req.files?.coverImage)
+    console.log("coverImageLocalPath", req.files?.coverImage[0])
+    console.log("coverImageLocalPath", req.files?.coverImage[0]?.path)
     // 1. Required fields validation
     if (!title || !author || !category || !price || !coverImageLocalPath || !slug) {
         return res.status(400).json({
@@ -48,12 +56,16 @@ const createBook = asyncHandler(async (req, res) => {
     }
 
     // 3. Validate author and category IDs
-    const validAuthor = await Author.findById(author);
+    const authorId = typeof author === "string" ? author.trim() : author;
+    const categoryId = typeof category === "string" ? category.trim() : category;
+    console.log("authorId", authorId)
+    console.log("categoryId", categoryId)
+    const validAuthor = await Author.findById(authorId);
     if (!validAuthor) {
         return res.status(400).json({ success: false, message: "Invalid Author ID" });
     }
 
-    const validCategory = await Category.findById(category);
+    const validCategory = await Category.findById(categoryId);
     if (!validCategory) {
         return res.status(400).json({ success: false, message: "Invalid Category ID" });
     }
@@ -71,11 +83,18 @@ const createBook = asyncHandler(async (req, res) => {
     if (isSlugExists) {
         return res.status(409).json({ success: false, message: "Slug already exists" });
     }
+    // const coverImage = req.files?.coverImage
+    //     ? req.files.coverImage[0].path
+    //     : null;
 
+    // Get other images
+
+    const additionalImagesPaths = req.files?.images?.map(img => img.path) || [];
+    const uploadedAdditionalImages = await uploadMultipleCloudinary(additionalImagesPaths);
     const book = await Book.create({
         title,
-        author,
-        category,
+        author: validAuthor,
+        category: validCategory,
         subCategory: subCategory || "",
         price,
         discountPercent: discountPercent || 0,
@@ -91,12 +110,16 @@ const createBook = asyncHandler(async (req, res) => {
         topSeller: !!topSeller,
         recommended: !!recommended,
         coverImage: coverImage.url,
-        slug
+        slug,
+        images: uploadedAdditionalImages
     });
+    validAuthor.books.push(book?._id)
+    validAuthor.save();
+    const verifyBook = await Book.findById(book?._id)
     res.status(201).json({
         success: true,
         message: "Book created successfully",
-        book
+        book: verifyBook
     });
 });
 const updateBook = asyncHandler(async (req, res) => {
@@ -136,7 +159,7 @@ const deleteBook = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Book Id is not found ", success: false })
     }
 
-    const book = await Book.findByIdAndDelete({_id: id})
+    const book = await Book.findByIdAndDelete({ _id: id })
 
     if (!book) {
         return res.status(404).json({ message: "Book not found", success: false });
@@ -157,7 +180,7 @@ const getBookById = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Invalid or missing ID", success: false });
     }
 
-    const book = await Book.findById(id);
+    const book = await Book.findById(id).populate("author");
 
 
     if (!book) {
@@ -210,7 +233,7 @@ const getBooks = asyncHandler(async (req, res) => {
 })
 const getTopSellers = asyncHandler(async (_, res) => {
 
-    const books = await Book.find({ topSeller: true })
+    const books = await Book.find({ topSeller: true }).populate("author")
 
     res.status(200).json({
         success: true,
@@ -221,7 +244,7 @@ const getTopSellers = asyncHandler(async (_, res) => {
 })
 const getRecommendedBooks = asyncHandler(async (_, res) => {
 
-    const books = await Book.find({ recommended: true })
+    const books = await Book.find({ recommended: true }).populate("author")
 
     res.status(200).json({
         success: true,

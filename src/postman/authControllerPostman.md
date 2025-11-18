@@ -140,8 +140,8 @@ Content-Type: application/json
 
 BODY:
 {
-  "email": "admin@example.com",
-  "password": "AdminPassword123"
+  "email": "admin@gmail.com",
+  "password": "test"
 }
 
 EXPECTED RESPONSE:
