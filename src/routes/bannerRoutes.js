@@ -25,6 +25,7 @@ router.route("/getAllBanners").get(getAllBanners);
 
 // Update banner details (admin only)
 router.route("/admin/updateBanner/:id").put(authMiddleware, adminMiddleware, updateBanner);
+router.route("/admin/updateBanner/:id").put(authMiddleware, adminMiddleware, updateBanner);
 
 // Update hero image of a banner (admin only)
 router.route("/admin/updateHeroImage").put(authMiddleware, adminMiddleware, upload.single("heroImage"), updateHeroImage);

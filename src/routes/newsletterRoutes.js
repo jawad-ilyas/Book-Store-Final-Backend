@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { subscribe, unsubscribe } from "../controllers/newsletterController.js";
+import { subscribe, unsubscribe ,getAllNewsLetter} from "../controllers/newsletterController.js";
 
 
 const router = Router()
@@ -7,6 +7,7 @@ const router = Router()
 
 router.route("/subscribe").post(subscribe)
 router.route("/unsubscribe").delete(unsubscribe)
+router.route("/").get(getAllNewsLetter)
 
 
 

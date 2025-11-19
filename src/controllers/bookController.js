@@ -222,7 +222,7 @@ const getBooks = asyncHandler(async (req, res) => {
 
 
 
-    const books = await Book.find(filter);
+    const books = await Book.find(filter).populate("author");
 
     res.status(200).json({
         success: true,

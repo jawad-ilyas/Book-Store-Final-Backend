@@ -9,6 +9,7 @@ const createBanner = asyncHandler(async (req, res) => {
     let bannerImageUrl = "";
 
     // heroImage upload
+    console.log("req.files?.heroImage?.[0]?.path", req.files?.heroImage?.[0]?.path)
     if (req.files?.heroImage?.[0]?.path) {
         const uploadedHero = await uploadCloudinary(req.files.heroImage[0].path);
         heroImageUrl = uploadedHero?.url || "";
@@ -36,6 +37,17 @@ const createBanner = asyncHandler(async (req, res) => {
 const getAllBanners = asyncHandler(async (req, res) => {
 
     const banners = await Banner.find();
+
+    res.status(200).json({
+        success: true,
+        message: "All Banners are Fetched",
+        banners
+    });
+
+})
+const getSingleBanner = asyncHandler(async (req, res) => {
+
+    const banners = await Banner.findOne({ isActive: active });
 
     res.status(200).json({
         success: true,
@@ -204,4 +216,4 @@ const deleteBanner = asyncHandler(async (req, res) => {
     });
 });
 
-export { createBanner, getAllBanners, updateBanner, updateHeroImage, updateBannerImage ,deleteBanner }
+export { createBanner, getAllBanners, updateBanner, updateHeroImage, updateBannerImage, deleteBanner, getSingleBanner }

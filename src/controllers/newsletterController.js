@@ -57,4 +57,10 @@ const unsubscribe = asyncHandler(async (req, res) => {
     });
 });
 
-export { subscribe, unsubscribe };
+const getAllNewsLetter = asyncHandler(async (req,res) => {
+
+    const news = await Newsletter.find()
+    return res.status(200).json({ message: "emails ", success: true, news })
+})
+
+export { subscribe, unsubscribe, getAllNewsLetter };

@@ -112,15 +112,16 @@ const deleteCategory = asyncHandler(async (req, res) => {
 // Get All Categories
 // ----------------------
 const getAllCategories = asyncHandler(async (req, res) => {
-    const categories = await Category.find();
+    let categories = await Category.find({ isActive: true })
+        .sort({ createdAt: -1 })   // NEW → ensure new category comes first
+        .lean();                   // NEW → returns POJO, not mongoose docs
 
     res.status(200).json({
         success: true,
         message: "Categories fetched successfully",
-        categories
+        categoriesList: [...categories] // NEW → return NEW array reference
     });
 });
-
 
 // ----------------------
 // Get Category by ID

@@ -4,6 +4,21 @@ import asyncHandler from "express-async-handler";
 import { Wishlist } from "../models/WhishList.js";
 import { CartModel } from "../models/CartModel.js";
 
+const getWishlist = asyncHandler(async (req, res) => {
+
+    const userId = req?.user?._id;
+
+    const wishlist = await User.findById(userId);
+    
+    const wishlistData = wishlist.wishlist
+
+    res.status(200).json({
+        message: "wishlist are return successfully",
+        success: true,
+        wishlist: wishlistData
+    });
+
+})
 
 
 const addToWishlist = asyncHandler(async (req, res) => {
@@ -11,11 +26,12 @@ const addToWishlist = asyncHandler(async (req, res) => {
     const { books } = req.body;
 
     if (!books || !Array.isArray(books) || books.length === 0) {
-            return res.status(400).json({ message: "Books are required", success: false });
+        return res.status(400).json({ message: "Books are required", success: false });
     }
 
     // Validate all books exist
     const validBooks = await Book.find({ _id: { $in: books } });
+
     if (validBooks.length !== books.length) {
         return res.status(409).json({ message: "Some Books are invalid", success: false });
     }
@@ -180,7 +196,7 @@ const removeFromCart = asyncHandler(async (req, res) => {
         cart: updatedCart
     });
 });
- const updateCartItem = asyncHandler(async (req, res) => {
+const updateCartItem = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { bookId, quantity } = req.body;
 
@@ -239,4 +255,4 @@ const removeFromCart = asyncHandler(async (req, res) => {
     });
 });
 
-export { addToWishlist, removeFromWishlist, addToCart, removeFromCart  ,updateCartItem}
+export { addToWishlist, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist }

@@ -112,7 +112,7 @@ const deleteReview = asyncHandler(async (req, res) => {
 const getReviewsByBook = asyncHandler(async (req, res) => {
     const { id: bookId } = req.params;
 
-    const booksReview = await Review.find({ bookId });
+    const booksReview = await Review.find({ bookId }).populate("userId");
 
     res.status(200).json({
         message: booksReview.length ? "Reviews by book fetched successfully" : "No reviews found for this book",

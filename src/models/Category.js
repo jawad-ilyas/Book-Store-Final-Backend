@@ -18,6 +18,10 @@ const CategorySchema = new Schema({
     coverImage: {
         type: String,
         required: true
+    },
+    isActive: {
+        type: String,
+        default: true
     }
 })
 

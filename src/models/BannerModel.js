@@ -35,6 +35,10 @@ const BannerSchema = new Schema({
     promoLink: {
         type: String,
         default: ""
+    },
+    isActive: {
+        type: String,
+        default: false
     }
 
 }, { timestamps: true });

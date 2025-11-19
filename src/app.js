@@ -28,10 +28,12 @@ import authorRouter from "./routes/authorRoutes.js";
 import couponRouter from "./routes/couponsRoutes.js";
 import subscriptionRouter from "./routes/subscriptionPlanRouter.js";
 import categoryRouter from "./routes/categoryRoutes.js";
+import bannerRouter from "./routes/bannerRoutes.js";
 
 
 app.use("/api/auth", AuthRouter)
 app.use("/api/users", UserRouter)
+app.use("/api/banners", bannerRouter)
 app.use("/api/books", BookRouter)
 app.use("/api/reviews", ReviewRouter)
 app.use("/api/orders", OrderRouter)
@@ -42,7 +44,7 @@ app.use("/api/adminAnalytics", adminAnalyticsRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/coupons", couponRouter);
 app.use("/api/subscriptions", subscriptionRouter);
-app.use("/api/categorys", categoryRouter);
+app.use("/api/categories", categoryRouter);
 
 
 
