@@ -9,7 +9,7 @@ const getWishlist = asyncHandler(async (req, res) => {
     const userId = req?.user?._id;
 
     const wishlist = await User.findById(userId);
-    
+
     const wishlistData = wishlist.wishlist
 
     res.status(200).json({
@@ -110,6 +110,7 @@ const addToCart = asyncHandler(async (req, res) => {
     let cart = await CartModel.findOne({ userId });
 
     if (!cart) {
+        console.log("card is not created first cart created then item added ")
         // Create new cart if not exist
         cart = await CartModel.create({
             userId,
@@ -118,6 +119,7 @@ const addToCart = asyncHandler(async (req, res) => {
     } else {
         // Check if book already exists in cart
         const itemIndex = cart.items.findIndex(item => item.bookId.toString() === bookId);
+        console.log("!!!!!!!!!!! card is already created !!!!!!")
 
         if (itemIndex > -1) {
             // Increment quantity
@@ -255,4 +257,16 @@ const updateCartItem = asyncHandler(async (req, res) => {
     });
 });
 
-export { addToWishlist, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist }
+const getCart = asyncHandler(async (req, res) => {
+
+    const userId = req.user?._id
+
+    const cart = await CartModel.findOne({ userId }).populate("items.bookId");
+    res.status(200).json({
+        message: "cart are fetched successfully",
+        success: true,
+        cartItems: cart
+    });
+})
+
+export { addToWishlist, getCart, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist }

@@ -194,46 +194,86 @@ const getBookById = asyncHandler(async (req, res) => {
 
     });
 })
+// const getBooks = asyncHandler(async (req, res) => {
+
+//     const { search, category, minPrice, maxPrice, minRating } = req.query;
+
+//     // console.log("typof category", typeof category)
+
+//     const filter = {}
+
+
+//     if (search) {
+//         filter.title = { $regex: search, $options: "i" };
+//     }
+
+//     // Category filter
+//     if (category) {
+//         const categoryArray = Array.isArray(category)
+//             ? category
+//             : category.split(","); // support CSV or array
+
+//         filter.category = { $in: categoryArray };
+//     }
+
+//     if (minPrice || maxPrice) {
+//         filter.price = {}
+//         if (minPrice) filter.price.$gte = Number(minPrice);
+//         if (maxPrice) filter.price.$lte = Number(maxPrice);
+//     }
+
+//     if (minRating) {
+//         filter.rating = { $gte: Number(minRating) }
+//     }
+
+
+
+//     const books = await Book.find(filter).populate("author category");
+
+//     res.status(200).json({
+//         success: true,
+//         books,
+//         message: "Book are fetched successfully",
+
+//     });
+// })
+
 const getBooks = asyncHandler(async (req, res) => {
+    const { search, category, minRating, page = 1, limit = 12 } = req.query;
 
-    const { search, category, minPrice, maxPrice, minRating } = req.query;
-
-
-    const filter = {}
-
+    const filter = {};
 
     if (search) {
-        filter.title = { $regex: search }
+        filter.title = { $regex: search, $options: "i" }; // case-insensitive
     }
 
     if (category) {
-        filter.category = category
-    }
-
-    if (minPrice || maxPrice) {
-        filter.price = {}
-        if (minPrice) filter.price.$gte = Number(minPrice);
-        if (maxPrice) filter.price.$lte = Number(maxPrice);
+        const categoryArray = Array.isArray(category) ? category : category.split(",");
+        filter.category = { $in: categoryArray };
     }
 
     if (minRating) {
-        filter.rating = { $gte: Number(minRating) }
+        filter.rating = { $gte: Number(minRating) };
     }
 
-
-
-    const books = await Book.find(filter).populate("author");
+    const skip = (Number(page) - 1) * Number(limit);
+    const total = await Book.countDocuments(filter); // total books matching filter
+    const books = await Book.find(filter)
+        .populate("author category")
+        .skip(skip)
+        .limit(Number(limit));
 
     res.status(200).json({
         success: true,
         books,
-        message: "Book are fetched successfully",
-
+        total,
+        page: Number(page),
+        totalPages: Math.ceil(total / limit),
     });
-})
+});
 const getTopSellers = asyncHandler(async (_, res) => {
 
-    const books = await Book.find({ topSeller: true }).populate("author")
+    const books = await Book.find({ topSeller: true }).populate("author category")
 
     res.status(200).json({
         success: true,

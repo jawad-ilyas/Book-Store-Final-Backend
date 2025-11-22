@@ -25,11 +25,6 @@ const CartModelSchema = new Schema({
         }
     ],
 
-    // fixed typo
-    updatedAt: {
-        type: Date
-    }
-
 }, { timestamps: true });
 
 export const CartModel = mongoose.model("CartModel", CartModelSchema);
