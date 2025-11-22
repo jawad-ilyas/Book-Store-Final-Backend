@@ -146,9 +146,9 @@ const removeFromCart = asyncHandler(async (req, res) => {
 
     const userId = req.user._id;
 
-    const { bookId, quantity = 1 } = req.body;
+    const { bookId } = req.body;
 
-    if (!bookId || quantity <= 0) {
+    if (!bookId) {
         return res.status(400).json({
             message: "Book and quantity are required",
             success: false
@@ -177,13 +177,9 @@ const removeFromCart = asyncHandler(async (req, res) => {
         });
     }
 
-    // If more quantity exists → subtract
-    if (cart.items[itemIndex].quantity > quantity) {
-        cart.items[itemIndex].quantity -= quantity;
-    } else {
-        // If quantity becomes 0 or less → remove item
-        cart.items.splice(itemIndex, 1);
-    }
+
+    cart.items.splice(itemIndex, 1);
+
 
     // Save cart
     await cart.save();
@@ -201,9 +197,9 @@ const removeFromCart = asyncHandler(async (req, res) => {
 const updateCartItem = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { bookId, quantity } = req.body;
-
+    console.log("bookid ", bookId)
     // Validate inputs
-    if (!bookId || !quantity || quantity < 0) {
+    if (!bookId || !quantity) {
         return res.status(400).json({
             success: false,
             message: "bookId and valid quantity are required",
@@ -230,7 +226,7 @@ const updateCartItem = asyncHandler(async (req, res) => {
 
     // Find item in cart
     const itemIndex = cart.items.findIndex(
-        (item) => item.book.toString() === bookId
+        (item) => item.bookId.toString() === bookId
     );
 
     if (itemIndex === -1) {
