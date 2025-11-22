@@ -9,7 +9,7 @@ const UserSchema = new Schema({
     address: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Address", // reference the Address model
-        required: true
+     
     },
     refreshToken: { type: String },
     phone: { type: String },
