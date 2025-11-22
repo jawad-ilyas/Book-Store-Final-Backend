@@ -31,7 +31,7 @@ const OrderSchema = new Schema({
     totalAmount: { type: Number, required: true },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], required: true, default: "pending" },
     orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered'], default: 'processing', required: true },
-    paymentMethod: { type: String, enum: ['card', 'cod', 'paypal'], default: 'cod', required: true },
+    paymentMethod: { type: String, enum: ['card', 'cod', 'paypal','stripe'], default: 'cod', required: true },
     shippingAddress: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Address", // reference the Address model
