@@ -27,12 +27,13 @@ const OrderSchema = new Schema({
         quantity: { type: Number, default: 1 },
         priceAtPurchase: { type: Number, required: true }
     }],
+    currency: { type: String, default: "usd" },
     totalAmount: { type: Number, required: true },
-    paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], required: true },
+    paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], required: true, default: "pending" },
     orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered'], default: 'processing', required: true },
     paymentMethod: { type: String, enum: ['card', 'cod', 'paypal'], default: 'cod', required: true },
-    shippingAddress: { 
-        type: mongoose.Schema.Types.ObjectId, 
+    shippingAddress: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Address", // reference the Address model
         required: true
     },
