@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { addToCart, addToWishlist,getCart, getWishlist, removeFromCart, removeFromWishlist, updateCartItem } from "../controllers/userController.js";
+import { addToCart, addToWishlist, getCart, getWishlist, updateProfileImage, removeFromCart, removeFromWishlist, updateCartItem } from "../controllers/userController.js";
 import { changePassword, getUserProfile, updateUserProfile } from "../controllers/authController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/multer.middlerware.js";
 
 
 const router = Router();
@@ -15,8 +16,9 @@ router.route("/cart/").get(authMiddleware, getCart)
 router.route("/cart/add").post(authMiddleware, addToCart)
 router.route("/cart/remove").put(authMiddleware, removeFromCart)
 router.route("/cart/update").put(authMiddleware, updateCartItem)
-router.route("/profile").post(authMiddleware, getUserProfile)
-router.route("/updateUserProfile/:id").put(authMiddleware, updateUserProfile)
+router.route("/profile").get(authMiddleware, getUserProfile)
+router.route("/updateUserProfile").put(authMiddleware, updateUserProfile)
+router.route("/updateImage").put(authMiddleware, upload.single("avatar"), updateProfileImage)
 
 
 export default router;

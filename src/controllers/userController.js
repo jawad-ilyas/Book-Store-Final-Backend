@@ -3,6 +3,8 @@ import { Book } from "../models/Book.js";
 import asyncHandler from "express-async-handler";
 import { Wishlist } from "../models/WhishList.js";
 import { CartModel } from "../models/CartModel.js";
+import { uploadCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary } from "../utils/deleteFromCloudinary.js";
 
 const getWishlist = asyncHandler(async (req, res) => {
 
@@ -265,4 +267,43 @@ const getCart = asyncHandler(async (req, res) => {
     });
 })
 
-export { addToWishlist, getCart, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist }
+const updateProfileImage = asyncHandler(async (req, res) => {
+    const avatarLocalPath = req?.file?.path;
+
+    if (!avatarLocalPath) {
+        return res.status(400).json({ message: "No image provided" });
+    }
+
+    const userId = req.user?._id;
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    // OPTIONAL: If user already has image → delete old one from Cloudinary
+    if (user.avatar) {
+        const publicId = user.avatar.split("/").pop().split(".")[0]; // extract public_id
+        await deleteFromCloudinary(publicId);
+    }
+
+    // Upload new image to Cloudinary
+    const uploadedImage = await uploadCloudinary(avatarLocalPath);
+    if (!uploadedImage) {
+        return res.status(500).json({ message: "Failed to upload new avatar" });
+    }
+
+    // Update user avatar
+    user.avatar = uploadedImage.secure_url;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+        success: true,
+        message: "Profile image updated successfully",
+        avatar: uploadedImage.secure_url,
+    });
+});
+
+
+export { addToWishlist, getCart, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist, updateProfileImage }

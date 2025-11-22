@@ -6,7 +6,11 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     avatar: { type: String, default: "" },
-    address: { type: String },
+    address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address", // reference the Address model
+        required: true
+    },
     refreshToken: { type: String },
     phone: { type: String },
     wishlist: [   // FIXED

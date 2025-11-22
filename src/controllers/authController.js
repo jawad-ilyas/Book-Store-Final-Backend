@@ -119,7 +119,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 const updateUserProfile = asyncHandler(async (req, res) => {
 
-    const id = req.params || req.user?._id;
+    const id = req.user?._id;
 
 
     const user = await User.findByIdAndUpdate(id, { ...req.body }, { new: true });
@@ -164,7 +164,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 
 
-    const userId = req.use._id
+    const userId = req.user._id
 
 
     const user = await User.findById(userId)
@@ -178,4 +178,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
     });
 
 })
+
+
 export { registerUser, loginUser, updateUserProfile, changePassword, getUserProfile }
