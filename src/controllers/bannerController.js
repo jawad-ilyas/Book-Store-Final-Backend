@@ -56,35 +56,49 @@ const getSingleBanner = asyncHandler(async (req, res) => {
     });
 
 })
+const getBanner = asyncHandler(async (req, res) => {
+    const { id: bannerId } = req?.params
+    console.log("banner id of the banners ", bannerId)
+    const bannerData = await Banner.findById(bannerId);
+
+    res.status(200).json({
+        success: true,
+        message: " Banners are Fetched",
+        bannerData
+    });
+
+})
 
 const updateBanner = asyncHandler(async (req, res) => {
     const { id: bannerId } = req.params;
-
+    console.log("banner id for the update banner is this ", bannerId)
     const banner = await Banner.findById(bannerId);
-
+    console.log("req?.body for update case ", req?.body)
     if (!banner) {
         return res.status(404).json({
             success: false,
             message: "Banner not found",
         });
     }
+    console.log("check banner is already present or not ", banner)
 
-    const updatedBanner = await Banner.findByIdAndUpdate(
+    const bannerData = await Banner.findByIdAndUpdate(
         bannerId,
         { ...req.body },
         { new: true }
     );
-
+    console.log("banner is update and new data after update ", bannerData)
     res.status(200).json({
         success: true,
         message: "Banner updated successfully",
-        banner: updatedBanner
+        // banner: updatedBanner
     });
 });
 
 const updateHeroImage = asyncHandler(async (req, res) => {
     const heroImageLocalPath = req.file?.path;
-    const { id: heroId } = req.body;
+    console.log("hero image local path for banner update  case ", heroImageLocalPath)
+    const { id: heroId } = req.params;
 
     if (!heroImageLocalPath) {
         return res.status(400).json({
@@ -127,13 +141,13 @@ const updateHeroImage = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: true,
         message: "Hero image updated successfully",
-        heroImage: heroImage.url
+        // heroImage: heroImage.url
     });
 });
 
 const updateBannerImage = asyncHandler(async (req, res) => {
     const bannerImageLocalPath = req.file?.path;
-    const { id: bannerId } = req.body;
+    const { id: bannerId } = req.params;
 
     if (!bannerImageLocalPath) {
         return res.status(400).json({
@@ -216,4 +230,4 @@ const deleteBanner = asyncHandler(async (req, res) => {
     });
 });
 
-export { createBanner, getAllBanners, updateBanner, updateHeroImage, updateBannerImage, deleteBanner, getSingleBanner }
+export { createBanner, getAllBanners, updateBanner, updateHeroImage, updateBannerImage, deleteBanner, getSingleBanner, getBanner }

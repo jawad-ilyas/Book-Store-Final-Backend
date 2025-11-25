@@ -8,7 +8,8 @@ import {
     updateBanner,
     updateHeroImage,
     updateBannerImage,
-    deleteBanner
+    deleteBanner,
+    getBanner
 } from "../controllers/bannerController.js";
 import { upload } from "../middleware/multer.middlerware.js";
 
@@ -24,14 +25,14 @@ router.route("/admin/createBanner").post(authMiddleware, adminMiddleware, upload
 router.route("/getAllBanners").get(getAllBanners);
 
 // Update banner details (admin only)
-router.route("/admin/updateBanner/:id").put(authMiddleware, adminMiddleware, updateBanner);
+router.route("/admin/getBanner/:id").get(authMiddleware, adminMiddleware, getBanner);
 router.route("/admin/updateBanner/:id").put(authMiddleware, adminMiddleware, updateBanner);
 
 // Update hero image of a banner (admin only)
-router.route("/admin/updateHeroImage").put(authMiddleware, adminMiddleware, upload.single("heroImage"), updateHeroImage);
+router.route("/admin/updateHeroImage/:id").put(authMiddleware, adminMiddleware, upload.single("heroImage"), updateHeroImage);
 
 // Update main/banner image of a banner (admin only)
-router.route("/admin/updateBannerImage").put(authMiddleware, adminMiddleware, upload.single("bannerImage"), updateBannerImage);
+router.route("/admin/updateBannerImage/:id").put(authMiddleware, adminMiddleware, upload.single("bannerImage"), updateBannerImage);
 
 // Delete a banner (admin only)
 router.route("/admin/deleteBanner/:id").delete(authMiddleware, adminMiddleware, deleteBanner);

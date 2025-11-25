@@ -37,7 +37,7 @@ const BannerSchema = new Schema({
         default: ""
     },
     isActive: {
-        type: String,
+        type: Boolean,
         default: false
     }
 
