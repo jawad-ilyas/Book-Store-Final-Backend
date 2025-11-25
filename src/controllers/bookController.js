@@ -30,15 +30,15 @@ const createBook = asyncHandler(async (req, res) => {
         recommended,
         slug
     } = req.body;
-    console.log("title into creaet book ", title)
-    console.log("title into creaet category ", category)
-    console.log("title into creaet price ", price)
-    console.log("title into creaet slug ", slug)
-    console.log("title into creaet author ", author)
+    // console.log("title into creaet book ", title)
+    // console.log("title into creaet category ", category)
+    // console.log("title into creaet price ", price)
+    // console.log("title into creaet slug ", slug)
+    // console.log("title into creaet author ", author)
     const coverImageLocalPath = req.files?.coverImage[0]?.path; // uploaded image path from Cloudinary
-    console.log("coverImageLocalPath", req.files?.coverImage)
-    console.log("coverImageLocalPath", req.files?.coverImage[0])
-    console.log("coverImageLocalPath", req.files?.coverImage[0]?.path)
+    // console.log("coverImageLocalPath", req.files?.coverImage)
+    // console.log("coverImageLocalPath", req.files?.coverImage[0])
+    // console.log("coverImageLocalPath", req.files?.coverImage[0]?.path)
     // 1. Required fields validation
     if (!title || !author || !category || !price || !coverImageLocalPath || !slug) {
         return res.status(400).json({
@@ -58,8 +58,8 @@ const createBook = asyncHandler(async (req, res) => {
     // 3. Validate author and category IDs
     const authorId = typeof author === "string" ? author.trim() : author;
     const categoryId = typeof category === "string" ? category.trim() : category;
-    console.log("authorId", authorId)
-    console.log("categoryId", categoryId)
+    // console.log("authorId", authorId)
+    // console.log("categoryId", categoryId)
     const validAuthor = await Author.findById(authorId);
     if (!validAuthor) {
         return res.status(400).json({ success: false, message: "Invalid Author ID" });
@@ -123,34 +123,125 @@ const createBook = asyncHandler(async (req, res) => {
     });
 });
 const updateBook = asyncHandler(async (req, res) => {
+  const id = req.params.id;
 
+  if (!id) return res.status(400).json({ success: false, message: "Book id missing" });
 
+  const book = await Book.findById(id);
+  if (!book) return res.status(404).json({ success: false, message: "Book not found" });
 
-    const { id } = req.params
+  // ----------------------------
+  // Parse incoming text fields
+  // ----------------------------
+  const {
+    title,
+    author,
+    category,
+    subCategory,
+    price,
+    discountPercent,
+    stock,
+    slug,
+    description,
+    topSeller,
+    recommended,
+  } = req.body;
 
-    if (!id) {
-        return res.status(400).json({ message: "Please send the book ID", success: false });
+  // ----------------------------
+  // Parse existing images (JSON string sent from frontend)
+  // ----------------------------
+  let parsedExistingImages = [];
+  if (req.body.images) {
+    try {
+      parsedExistingImages = JSON.parse(req.body.images);
+      if (!Array.isArray(parsedExistingImages)) parsedExistingImages = [];
+    } catch (err) {
+      parsedExistingImages = [];
     }
+  }
 
-    const bookId = await Book.findById(id)
+  // ----------------------------
+  // Upload new additional images to Cloudinary (if any)
+  // ----------------------------
+  const newFiles = req.files?.images || []; // array of file objects from multer
+  let uploadedAdditionalUrls = [];
 
-    if (!bookId) {
-        return res.status(404).json({ message: "Book not found", success: false });
+  if (newFiles.length) {
+    // collect local paths (multer stores path property if diskStorage used)
+    const localPaths = newFiles.map((f) => f.path).filter(Boolean);
+
+    if (localPaths.length) {
+      // uploadMultipleCloudinary should return array of URLs (strings)
+      uploadedAdditionalUrls = await uploadMultipleCloudinary(localPaths);
+
+      // optional: remove local temp files after upload
+      await Promise.all(
+        localPaths.map(async (p) => {
+          try {
+            await fs.unlink(p);
+          } catch (err) {
+            // ignore unlink errors
+          }
+        })
+      );
     }
+  }
 
-    const updateBook = await Book.findByIdAndUpdate(
-        id,
-        { ...req.body },
-        {
-            new: true
-        }
-    )
-    res.status(201).json({
-        success: true,
-        message: "Book updated  successfully",
-        book: updateBook
-    });
-})
+  // ----------------------------
+  // Handle cover image upload (if new one provided)
+  // ----------------------------
+  let finalCoverUrl = book.coverImage || null;
+
+  const coverFile = req.files?.coverImage?.[0];
+  if (coverFile?.path) {
+    // upload single cover image
+    const uploadedCover = await uploadCloudinary(coverFile.path);
+    if (uploadedCover?.url) finalCoverUrl = uploadedCover.url;
+
+    // optional: remove local cover file
+    try {
+      await fs.unlink(coverFile.path);
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  // ----------------------------
+  // Merge final images array: existing + newly uploaded
+  // ----------------------------
+  const finalImages = [...parsedExistingImages, ...uploadedAdditionalUrls];
+
+  // ----------------------------
+  // Build update payload
+  // ----------------------------
+  const updatePayload = {
+    // only set fields that are defined (you can adjust to validate/whitelist)
+    ...(title !== undefined && { title }),
+    ...(author !== undefined && { author }),
+    ...(category !== undefined && { category }),
+    ...(subCategory !== undefined && { subCategory }),
+    ...(price !== undefined && { price }),
+    ...(discountPercent !== undefined && { discountPercent }),
+    ...(stock !== undefined && { stock }),
+    ...(slug !== undefined && { slug }),
+    ...(description !== undefined && { description }),
+    ...(topSeller !== undefined && { topSeller: topSeller === "true" || topSeller === true }),
+    ...(recommended !== undefined && { recommended: recommended === "true" || recommended === true }),
+    coverImage: finalCoverUrl,
+    images: finalImages,
+  };
+
+  const updated = await Book.findByIdAndUpdate(id, updatePayload, { new: true });
+
+  return res.status(200).json({
+    success: true,
+    message: "Book updated successfully",
+    data: updated,
+  });
+});
+
+
+
 const deleteBook = asyncHandler(async (req, res) => {
 
     const { id } = req.params

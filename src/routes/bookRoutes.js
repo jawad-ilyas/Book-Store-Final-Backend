@@ -23,7 +23,10 @@ router.route("/admin/createBook").post(
     ]),
     createBook
 );
-router.route("/admin/updateBook/:id").put(authMiddleware, adminMiddleware, updateBook)
+router.route("/admin/updateBook/:id").put(authMiddleware, adminMiddleware, upload.fields([
+    { name: "coverImage", maxCount: 1 },
+    { name: "images", maxCount: 10 }
+]), updateBook)
 router.route("/admin/deleteBook/:id").delete(authMiddleware, adminMiddleware, deleteBook)
 
 // ----------------------

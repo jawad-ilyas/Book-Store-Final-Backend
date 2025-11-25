@@ -10,8 +10,10 @@ const getAdminAnalytics = asyncHandler(async (req, res) => {
     // Total Orders
     const totalOrders = await Order.countDocuments();
 
-    // Total Income (all orders ever)
+    // All Orders
     const allOrders = await Order.find();
+
+    // Total Income
     const totalIncome = allOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
     // Daily Sales
@@ -24,6 +26,7 @@ const getAdminAnalytics = asyncHandler(async (req, res) => {
     const dailyOrders = await Order.find({
         createdAt: { $gte: today, $lt: tomorrow }
     });
+
     const dailySales = dailyOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
     // Monthly Sales
@@ -34,9 +37,31 @@ const getAdminAnalytics = asyncHandler(async (req, res) => {
     const monthlyOrders = await Order.find({
         createdAt: { $gte: startOfMonth, $lt: startOfNextMonth }
     });
+
     const monthlySales = monthlyOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
-    // Best Selling Books (aggregate by quantity)
+    // -----------------------------
+    // 📌 NEW: 12-MONTH SALES HISTORY
+    // -----------------------------
+    const monthlySalesHistory = [];
+
+    for (let i = 11; i >= 0; i--) {
+        const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+
+        const ordersInMonth = allOrders.filter(order =>
+            order.createdAt >= start && order.createdAt < end
+        );
+
+        const total = ordersInMonth.reduce((sum, order) => sum + order.totalAmount, 0);
+
+        monthlySalesHistory.push({
+            month: start.toLocaleString("default", { month: "short" }),
+            sales: total
+        });
+    }
+
+    // Best Selling Books
     const booksMap = {};
     allOrders.forEach(order => {
         order.items.forEach(item => {
@@ -48,16 +73,15 @@ const getAdminAnalytics = asyncHandler(async (req, res) => {
         });
     });
 
-    // Convert map to array and sort descending
     const bestSellingBooks = Object.entries(booksMap)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 5) // top 5 books
-        .map(entry => entry[0]); // just bookIds
+        .slice(0, 5)
+        .map(entry => entry[0]);
 
-    // Optionally, populate book info
-    const bestSellingBooksPopulated = await Book.find({ _id: { $in: bestSellingBooks } });
+    const bestSellingBooksPopulated = await Book.find({
+        _id: { $in: bestSellingBooks }
+    });
 
-    // Response
     res.status(200).json({
         success: true,
         analytics: {
@@ -66,7 +90,8 @@ const getAdminAnalytics = asyncHandler(async (req, res) => {
             totalIncome,
             dailySales,
             monthlySales,
-            bestSellingBooks: bestSellingBooksPopulated
+            monthlySalesHistory,   // 🔥 New field
+            bestSellingBooks: bestSellingBooksPopulated,
         }
     });
 });

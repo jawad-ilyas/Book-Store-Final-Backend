@@ -131,8 +131,9 @@ const getOrdersByUser = asyncHandler(async (req, res) => {
 
 
 const getAllOrders = asyncHandler(async (req, res) => {
-    
+
     const orders = await Order.find()
+        .populate("userId", "name email")
         .populate("items.bookId")
         .populate("shippingAddress");
 
@@ -142,7 +143,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
             message: "No orders found"
         });
     }
-
+    // console.log("orders fetch details for the admin ", orders)
     res.status(200).json({
         success: true,
         message: "Orders fetched successfully",
@@ -154,6 +155,8 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     const { id: orderId } = req.params;
     const { orderStatus } = req.body;
 
+    console.log("order Status req.body", orderStatus)
+    console.log("orderId  ", orderId)
     const verifyOrder = await Order.findById(orderId);
 
     if (!verifyOrder) {

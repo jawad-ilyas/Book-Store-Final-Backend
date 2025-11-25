@@ -21,7 +21,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const OrderSchema = new Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     items: [{
         bookId: { type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true },
         quantity: { type: Number, default: 1 },
@@ -30,8 +34,8 @@ const OrderSchema = new Schema({
     currency: { type: String, default: "usd" },
     totalAmount: { type: Number, required: true },
     paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], required: true, default: "pending" },
-    orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered'], default: 'processing', required: true },
-    paymentMethod: { type: String, enum: ['card', 'cod', 'paypal','stripe'], default: 'cod', required: true },
+    orderStatus: { type: String, enum: ['processing', 'shipped', 'delivered', "cancelled"], default: 'processing', required: true },
+    paymentMethod: { type: String, enum: ['card', 'cod', 'paypal', 'stripe'], default: 'cod', required: true },
     shippingAddress: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Address", // reference the Address model
