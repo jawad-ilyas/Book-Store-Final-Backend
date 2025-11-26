@@ -22,6 +22,20 @@ const getWishlist = asyncHandler(async (req, res) => {
 
 })
 
+const AllUserList = asyncHandler(async (req, res) => {
+
+
+    const users = await User.find();
+
+
+
+    res.status(200).json({
+        message: "wishlist are return successfully",
+        success: true,
+        users
+    });
+
+})
 
 const addToWishlist = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
@@ -266,6 +280,24 @@ const getCart = asyncHandler(async (req, res) => {
         cartItems: cart
     });
 })
+const getCartCount = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+
+    const cart = await CartModel.findOne({ userId });
+
+    let count = 0;
+
+    if (cart && cart.items) {
+        count = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    res.status(200).json({
+        message: "Cart count fetched successfully",
+        success: true,
+        cartItems: count,
+    });
+});
+
 
 const updateProfileImage = asyncHandler(async (req, res) => {
     const avatarLocalPath = req?.file?.path;
@@ -306,4 +338,4 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 });
 
 
-export { addToWishlist, getCart, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist, updateProfileImage }
+export { addToWishlist, getCart, removeFromWishlist, addToCart, removeFromCart, updateCartItem, getWishlist, updateProfileImage, getCartCount, AllUserList }

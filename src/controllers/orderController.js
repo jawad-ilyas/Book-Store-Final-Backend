@@ -71,8 +71,14 @@ const createOrder = asyncHandler(async (req, res) => {
     }
 
     // 7. Clear user cart
-    cart.items = [];
-    await cart.save();
+
+    const newCart = await CartModel.findOneAndUpdate(
+        { userId },
+        { $set: { items: [] } },
+        { new: true }
+    );
+    console.log("cart", cart)
+    console.log("newCart", newCart)
 
     // 8. Return response
     const populatedOrder = await Order.findById(order._id)
@@ -82,7 +88,8 @@ const createOrder = asyncHandler(async (req, res) => {
     res.status(201).json({
         success: true,
         message: "Order created successfully",
-        order: populatedOrder
+        order: populatedOrder,
+        cartItems: newCart
     });
 })
 

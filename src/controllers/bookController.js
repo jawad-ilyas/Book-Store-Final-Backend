@@ -271,7 +271,7 @@ const getBookById = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Invalid or missing ID", success: false });
     }
 
-    const book = await Book.findById(id).populate("author");
+    const book = await Book.findById(id).populate("author").populate("category", "name");
 
 
     if (!book) {
